@@ -448,7 +448,59 @@ body {
   }
 
   function imgTag(item, cls) {
-    return '<img class="' + cls + '" src="/api/image/' + item.item_id + '" loading="lazy" alt="' + escapeAttr(item.name) + '" onerror="this.outerHTML=this.getAttribute(\'data-ph\')" data-ph=\'' + placeholderTag(cls) + '\'>';
+    return '<img class="' + cls + '" data-src="/api/image/' + item.item_id + '" alt="' + escapeAttr(item.name) + '" onerror="this.outerHTML=this.getAttribute(\'data-ph\')" data-ph=\'' + placeholderTag(cls) + '\'>';
+  }
+
+  /* --- Image queue: max 3 concurrent loads + IntersectionObserver --- */
+  var MAX_CONCURRENT = 3;
+  var activeLoads = 0;
+  var imgQueue = [];
+  var observer = null;
+
+  function processQueue() {
+    while (activeLoads < MAX_CONCURRENT && imgQueue.length > 0) {
+      var img = imgQueue.shift();
+      if (!img.dataset.src) continue;
+      activeLoads++;
+      var src = img.dataset.src;
+      delete img.dataset.src;
+      img.src = src;
+      img.addEventListener('load', onImgDone);
+      img.addEventListener('error', onImgDone);
+    }
+  }
+
+  function onImgDone() {
+    this.removeEventListener('load', onImgDone);
+    this.removeEventListener('error', onImgDone);
+    activeLoads--;
+    processQueue();
+  }
+
+  function enqueueImage(img) {
+    if (imgQueue.indexOf(img) === -1) {
+      imgQueue.push(img);
+    }
+    processQueue();
+  }
+
+  function observeImages() {
+    imgQueue = [];
+    activeLoads = 0;
+    if (observer) observer.disconnect();
+    observer = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          var img = entries[i].target;
+          observer.unobserve(img);
+          enqueueImage(img);
+        }
+      }
+    }, { rootMargin: '200px' });
+    var imgs = catalogEl.querySelectorAll('img[data-src]');
+    for (var i = 0; i < imgs.length; i++) {
+      observer.observe(imgs[i]);
+    }
   }
 
   function placeholderTag(cls) {
@@ -514,6 +566,7 @@ body {
     }
     html += '</div>';
     catalogEl.innerHTML = html;
+    observeImages();
   }
 
   function renderList(items) {
@@ -539,6 +592,7 @@ body {
     }
     html += '</tbody></table>';
     catalogEl.innerHTML = html;
+    observeImages();
   }
 
   function render() {
