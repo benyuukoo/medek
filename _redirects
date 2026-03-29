@@ -1,0 +1,2 @@
+/api/items    https://francemedek.app.n8n.cloud/webhook/zoho-items-list    200
+/api/image/:item_id    https://francemedek.app.n8n.cloud/webhook/zoho-item-image-raw?item_id=:item_id    200
