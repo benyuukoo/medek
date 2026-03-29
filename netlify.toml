@@ -1,13 +1,10 @@
 [build]
   publish = "."
 
-[[headers]]
-  for = "/api/*"
-  [headers.values]
-    Access-Control-Allow-Origin = "*"
-    Cache-Control = "public, max-age=300"
+[[edge_functions]]
+  function = "items"
+  path = "/api/items"
 
-[[headers]]
-  for = "/api/image/*"
-  [headers.values]
-    Cache-Control = "public, max-age=86400"
+[[edge_functions]]
+  function = "image"
+  path = "/api/image/*"
