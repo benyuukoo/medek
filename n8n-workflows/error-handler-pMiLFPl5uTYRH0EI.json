@@ -1,0 +1,112 @@
+{
+  "name": "Subworkflow Error Report via Gmail",
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "When Workflow Errors",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [240, 304]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Parse the error trigger payload into a structured object.\n// Expected prefix format (Contract v1):\n//   [SUPPLIER:STAGE] human message | ctx={\"key\":\"value\",...}\nconst payload = $input.first().json;\nconst exec = payload.execution || {};\nconst workflowData = exec.workflowData || {};\nconst error = exec.error || {};\n\nconst workflowId = workflowData.id || '';\nconst workflowName = workflowData.name || 'Unknown';\nconst executionId = exec.id || '';\nconst errorNode = (error.node && error.node.name) || 'Unknown';\nconst rawMessage = String(error.message || '').trim();\nconst stoppedAt = exec.stoppedAt || new Date().toISOString();\n\nlet supplier = null;\nlet stage = null;\nlet humanMessage = rawMessage;\nconst prefixMatch = rawMessage.match(/^\\[([A-Z0-9_-]+):([a-z_]+)\\]\\s*(.*)$/);\nif (prefixMatch) {\n  supplier = prefixMatch[1];\n  stage = prefixMatch[2];\n  humanMessage = prefixMatch[3];\n}\n\nlet ctx = null;\nconst ctxMatch = humanMessage.match(/^(.*?)\\s*\\|\\s*ctx=(\\{.*\\})\\s*$/);\nif (ctxMatch) {\n  humanMessage = ctxMatch[1].trim();\n  try { ctx = JSON.parse(ctxMatch[2]); }\n  catch (_) { ctx = { _parse_error: 'ctx was not valid JSON', _raw: ctxMatch[2] }; }\n}\n\nconst messageId = (ctx && (ctx.messageId || ctx.message_id)) || null;\nconst executionUrl = workflowId && executionId\n  ? 'https://francemedek.app.n8n.cloud/workflow/' + workflowId + '/executions/' + executionId\n  : null;\nconst gmailUrl = messageId ? 'https://mail.google.com/mail/u/0/#all/' + messageId : null;\n\nreturn [{\n  json: {\n    workflowId, workflowName, executionId, executionUrl,\n    errorNode, supplier, stage, humanMessage, rawMessage,\n    ctx, ctxPretty: ctx ? JSON.stringify(ctx, null, 2) : null,\n    messageId, gmailUrl, timestamp: stoppedAt, hasMessageId: !!messageId,\n  },\n}];"
+      },
+      "name": "Parse Error Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 304]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.hasMessageId }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "name": "Has messageId?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [740, 304]
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.messageId }}",
+        "labelIds": ["Label_4919128104494025150"]
+      },
+      "name": "Label offending email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [980, 204]
+    },
+    {
+      "parameters": {
+        "sendTo": "gestion.medek@gmail.com",
+        "subject": "=[n8n error] {{ $('Parse Error Payload').item.json.supplier || $('Parse Error Payload').item.json.workflowName }}{{ $('Parse Error Payload').item.json.stage ? ':' + $('Parse Error Payload').item.json.stage : '' }} — {{ $('Parse Error Payload').item.json.humanMessage }}",
+        "emailType": "html",
+        "message": "=<h2 style=\"margin:0 0 12px\">🚨 Workflow error</h2>\n<table style=\"border-collapse:collapse;font-family:sans-serif;font-size:14px\">\n  <tr><td style=\"padding:4px 12px 4px 0;color:#666\">Supplier</td><td><b>{{ $('Parse Error Payload').item.json.supplier || '(unknown)' }}</b></td></tr>\n  <tr><td style=\"padding:4px 12px 4px 0;color:#666\">Stage</td><td><b>{{ $('Parse Error Payload').item.json.stage || '(unknown)' }}</b></td></tr>\n  <tr><td style=\"padding:4px 12px 4px 0;color:#666\">Workflow</td><td>{{ $('Parse Error Payload').item.json.workflowName }}</td></tr>\n  <tr><td style=\"padding:4px 12px 4px 0;color:#666\">Failed node</td><td>{{ $('Parse Error Payload').item.json.errorNode }}</td></tr>\n  <tr><td style=\"padding:4px 12px 4px 0;color:#666\">Timestamp</td><td>{{ $('Parse Error Payload').item.json.timestamp }}</td></tr>\n</table>\n<h3 style=\"margin:16px 0 4px\">Message</h3>\n<p style=\"margin:0;padding:8px 12px;background:#fef2f2;border-left:3px solid #dc2626;font-family:monospace;white-space:pre-wrap\">{{ $('Parse Error Payload').item.json.humanMessage }}</p>\n{{ $('Parse Error Payload').item.json.ctxPretty ? '<h3 style=\"margin:16px 0 4px\">Context</h3><pre style=\"margin:0;padding:8px 12px;background:#f5f5f4;font-size:12px;white-space:pre-wrap\">' + $('Parse Error Payload').item.json.ctxPretty + '</pre>' : '' }}\n<h3 style=\"margin:16px 0 4px\">Links</h3>\n<ul style=\"margin:0;padding-left:20px\">\n  {{ $('Parse Error Payload').item.json.executionUrl ? '<li><a href=\"' + $('Parse Error Payload').item.json.executionUrl + '\">Open n8n execution</a></li>' : '' }}\n  {{ $('Parse Error Payload').item.json.gmailUrl ? '<li><a href=\"' + $('Parse Error Payload').item.json.gmailUrl + '\">Open offending Gmail message</a></li>' : '' }}\n</ul>\n<hr style=\"margin:20px 0;border:none;border-top:1px solid #e5e5e5\">\n<p style=\"margin:0;color:#888;font-size:12px\">Automated error notification from n8n · gestion.medek@gmail.com</p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Send Error Report",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [1240, 404]
+    }
+  ],
+  "connections": {
+    "When Workflow Errors": {
+      "main": [
+        [
+          { "node": "Parse Error Payload", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Parse Error Payload": {
+      "main": [
+        [
+          { "node": "Has messageId?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Has messageId?": {
+      "main": [
+        [
+          { "node": "Label offending email", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Send Error Report", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Label offending email": {
+      "main": [
+        [
+          { "node": "Send Error Report", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  }
+}
