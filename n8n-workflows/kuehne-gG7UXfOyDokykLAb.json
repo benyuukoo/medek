@@ -1,0 +1,236 @@
+{
+  "name": "Import Facture Kuehne",
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "pMiLFPl5uTYRH0EI",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
+  },
+  "nodes": [
+    {
+      "parameters": { "inputSource": "passthrough" },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [16, 312],
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SUPPLIER = 'KUEHNE';\nconst fail = (stage, msg, ctx) => {\n  const suffix = ctx ? ' | ctx=' + JSON.stringify(ctx) : '';\n  throw new Error('[' + SUPPLIER + ':' + stage + '] ' + msg + suffix);\n};\n\nconst FILE_PATTERN = /(?:fact|invoice|basware).*\\.pdf$/i;\nconst result = [];\n\nfor (const inputItem of $input.all()) {\n  const binaryData = inputItem.binary;\n\n  const messageId =\n    inputItem.json.id ??\n    inputItem.json.messageId ??\n    null;\n\n  if (!binaryData) {\n    result.push({\n      json: { ...inputItem.json, file_found: false, messageId }\n    });\n    continue;\n  }\n\n  const matchingKeys = Object.keys(binaryData).filter((key) =>\n    FILE_PATTERN.test(binaryData[key].fileName || '')\n  );\n\n  if (matchingKeys.length === 0) {\n    const availableFiles = Object.keys(binaryData)\n      .map((k) => binaryData[k].fileName || k);\n    result.push({\n      json: { ...inputItem.json, file_found: false, messageId, availableFiles }\n    });\n    continue;\n  }\n\n  for (const key of matchingKeys) {\n    result.push({\n      json: {\n        ...inputItem.json,\n        file_found: true,\n        messageId,\n        attachmentKey: key,\n        attachmentFileName: binaryData[key].fileName,\n        attachmentMimeType: binaryData[key].mimeType\n      },\n      binary: { file: binaryData[key] }\n    });\n  }\n}\n\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 216],
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+          "conditions": [{ "leftValue": "={{ $json.file_found }}", "rightValue": true, "operator": { "type": "boolean", "operation": "equals" } }],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [464, 216],
+      "name": "Fichier trouvé ?"
+    },
+    {
+      "parameters": { "operation": "pdf", "binaryPropertyName": "file", "options": {} },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [688, 120],
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const SUPPLIER = 'KUEHNE';\nconst log = (stage, msg, meta) => {\n  const suffix = meta && Object.keys(meta).length ? ' ' + JSON.stringify(meta) : '';\n  console.log('[' + SUPPLIER + ':' + stage + '] ' + msg + suffix);\n};\nconst fail = (stage, msg, ctx) => {\n  const suffix = ctx ? ' | ctx=' + JSON.stringify(ctx) : '';\n  throw new Error('[' + SUPPLIER + ':' + stage + '] ' + msg + suffix);\n};\n\nconst text = $input.item.json.text || '';\nconst messageId = $input.item.json.messageId || null;\nconst filename = $input.item.json.attachmentFileName || null;\n\nfunction parseAmount(str) {\n  if (!str) return null;\n  const num = parseFloat(str.replace(/\\s/g, ''));\n  return isNaN(num) ? null : Math.round(num * 100) / 100;\n}\n\n// Invoice Number & Date\nconst invMatch = text.match(/INVOICE NO\\.\\s*\\/\\s*DATE\\s+(\\S+)\\s+(\\d{2})\\.(\\d{2})\\.(\\d{4})/);\nif (!invMatch) fail('parse', 'Numéro de facture KN non trouvé', { messageId, filename });\nconst invoiceNumber = invMatch[1];\nconst invoiceDateISO = `${invMatch[4]}-${invMatch[3]}-${invMatch[2]}`;\n\n// Due Date\nconst dueMatch = text.match(/DUE DATE\\s+(\\d{2})\\.(\\d{2})\\.(\\d{4})/);\nconst dueDateISO = dueMatch ? `${dueMatch[3]}-${dueMatch[2]}-${dueMatch[1]}` : null;\n\n// KN Tracking\nconst knMatch = text.match(/KN TRACKING NO\\.\\s+([\\d\\s]+)/);\nconst knTracking = knMatch ? knMatch[1].trim().replace(/\\s+/g, ' ') : null;\n\n// Currency & Invoice Total\nconst totalMatch = text.match(/INVOICE TOTAL\\s+(EUR|USD)\\s+([\\d\\s]+\\.\\d{2})/);\nif (!totalMatch) fail('parse', 'INVOICE TOTAL non trouvé', { messageId, invoice_number: invoiceNumber });\nconst currency = totalMatch[1];\nconst invoiceTotal = parseAmount(totalMatch[2]);\n\n// SUBTOTAL\nconst subMatch = text.match(/SUBTOTAL\\s+(?:EUR|USD)\\s+([\\d\\s]+\\.\\d{2})\\s+([\\d\\s]+\\.\\d{2})/);\nconst subtotal = subMatch ? parseAmount(subMatch[1]) : invoiceTotal;\nconst totalVAT = subMatch ? parseAmount(subMatch[2]) : 0;\n\n// VAT breakdown\nconst vatRegex = /INVOICE VAT TOTAL\\s+(?:[\\d.]+\\s*%|N\\/A)\\s+([1DI])\\s+(?:EUR|USD)\\s+([\\d\\s]+\\.\\d{2})\\s+([\\d\\s]+\\.\\d{2})/g;\nlet amountTaxable = 0, vatOnTaxable = 0, amountDebours = 0, amountExempt = 0;\nlet m;\nwhile ((m = vatRegex.exec(text)) !== null) {\n  const cat = m[1], net = parseAmount(m[2]), vat = parseAmount(m[3]);\n  if (cat === '1') { amountTaxable = net; vatOnTaxable = vat; }\n  else if (cat === 'D') { amountDebours = net; }\n  else if (cat === 'I') { amountExempt = net; }\n}\n\n// USD→EUR rate\nconst rateMatch = text.match(/USD\\s*-\\s*EUR\\s*:\\s*([\\d.]+)/);\nconst usdEurRate = rateMatch ? parseFloat(rateMatch[1]) : null;\n\nlog('parse', 'OK', { invoice_number: invoiceNumber, currency, total: invoiceTotal });\n\nreturn {\n  invoice_number: invoiceNumber,\n  invoice_date: invoiceDateISO,\n  due_date: dueDateISO,\n  kn_tracking: knTracking,\n  currency,\n  invoice_total: invoiceTotal,\n  subtotal,\n  total_vat: totalVAT,\n  amount_taxable: amountTaxable,\n  vat_on_taxable: vatOnTaxable,\n  amount_debours: amountDebours,\n  amount_exempt: amountExempt,\n  usd_eur_rate: usdEurRate,\n  source_pages: $input.item.json.numpages || null,\n  messageId\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [912, 120],
+      "name": "Nettoyer les lignes1"
+    },
+    {
+      "parameters": { "options": {} },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [1136, 120],
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.zohoapis.com/books/v3/bills?organization_id=914480488&bill_number={{ $json.invoice_number }}&vendor_id=8564629000001168017",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1360, -144],
+      "name": "Vérifier existence facture1",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 3 },
+          "conditions": [{ "id": "780b0019-042f-42fb-9b0f-f51734e75b50", "leftValue": "={{ $json.bills.length }}", "rightValue": 0, "operator": { "type": "number", "operation": "equals" } }],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [1584, -144],
+      "name": "Facture déjà importée ?1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SUPPLIER = 'KUEHNE';\nconst log = (stage, msg, meta) => {\n  const suffix = meta && Object.keys(meta).length ? ' ' + JSON.stringify(meta) : '';\n  console.log('[' + SUPPLIER + ':' + stage + '] ' + msg + suffix);\n};\nconst fail = (stage, msg, ctx) => {\n  const suffix = ctx ? ' | ctx=' + JSON.stringify(ctx) : '';\n  throw new Error('[' + SUPPLIER + ':' + stage + '] ' + msg + suffix);\n};\n\nconst data = $('Nettoyer les lignes1').item.json;\nconst messageId = data.messageId || null;\n\nconst VENDOR_ID         = '8564629000001168017';\nconst CURRENCY_EUR      = '8564629000000000109';\nconst CURRENCY_USD      = '8564629000000000097';\nconst TAX_ID_20         = '8564629000000163343';\nconst ACCOUNT_TRANSPORT = '8564629000000980076';\nconst ACCOUNT_DEBOURS   = '8564629000000980076';\n\nconst isUSD = data.currency === 'USD';\nconst currencyId = isUSD ? CURRENCY_USD : CURRENCY_EUR;\n\nconst lineItems = [];\nif (isUSD) {\n  lineItems.push({\n    account_id: ACCOUNT_TRANSPORT,\n    name: 'Fret maritime – Facture N°' + data.invoice_number,\n    description: 'Facture KN N°' + data.invoice_number,\n    quantity: 1,\n    rate: data.invoice_total\n  });\n} else {\n  if (data.amount_taxable > 0) {\n    lineItems.push({\n      account_id: ACCOUNT_TRANSPORT,\n      name: 'Logistique locale – Facture N°' + data.invoice_number,\n      description: 'KN local (TVA 20%) – tracking ' + (data.kn_tracking || ''),\n      quantity: 1,\n      rate: data.amount_taxable,\n      tax_id: TAX_ID_20\n    });\n  }\n  if (data.amount_debours > 0) {\n    lineItems.push({\n      account_id: ACCOUNT_DEBOURS,\n      name: 'Droits de douane – Facture N°' + data.invoice_number,\n      description: 'KN débours douane – tracking ' + (data.kn_tracking || ''),\n      quantity: 1,\n      rate: data.amount_debours\n    });\n  }\n  if (data.amount_exempt > 0) {\n    lineItems.push({\n      account_id: ACCOUNT_TRANSPORT,\n      name: 'Fret/import exempt – Facture N°' + data.invoice_number,\n      description: 'KN exempt import Art.262-II-14 CGI – tracking ' + (data.kn_tracking || ''),\n      quantity: 1,\n      rate: data.amount_exempt\n    });\n  }\n}\n\nconst notes = 'KN Tracking: ' + (data.kn_tracking || 'N/A')\n  + (isUSD ? '\\nMontant original: ' + data.invoice_total.toFixed(2) + ' USD' : '');\n\nconst billBody = {\n  vendor_id: VENDOR_ID,\n  bill_number: data.invoice_number,\n  date: data.invoice_date,\n  due_date: data.due_date,\n  payment_terms: 30,\n  payment_terms_label: '30 net',\n  reference_number: data.invoice_number,\n  is_inclusive_tax: false,\n  currency_id: currencyId,\n  exchange_rate: 1,\n  notes: notes,\n  line_items: lineItems\n};\n\nconst sourceBinary = $('Code in JavaScript').first().binary;\nif (!sourceBinary || !sourceBinary.file) {\n  fail('parse', 'Binaire PDF introuvable', { messageId, invoice_number: data.invoice_number });\n}\n\nreturn {\n  json: {\n    billJSON: JSON.stringify(billBody),\n    invoice_number: data.invoice_number,\n    invoice_date: data.invoice_date,\n    currency: data.currency,\n    invoice_total: data.invoice_total,\n    is_usd: isUSD,\n    line_items_count: lineItems.length,\n    messageId\n  },\n  binary: { file: sourceBinary.file }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1808, -240],
+      "name": "Préparer JSON facture1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.zohoapis.com/books/v3/bills?organization_id=914480488",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            { "parameterType": "formBinaryData", "name": "attachment", "inputDataFieldName": "file" },
+            { "name": "JSONString", "value": "={{ $json.billJSON }}" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2032, -240],
+      "name": "Créer facture fournisseur Zoho Books1",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "jsCode": "const SUPPLIER = 'KUEHNE';\nconst log = (stage, msg, meta) => {\n  const suffix = meta && Object.keys(meta).length ? ' ' + JSON.stringify(meta) : '';\n  console.log('[' + SUPPLIER + ':' + stage + '] ' + msg + suffix);\n};\nconst fail = (stage, msg, ctx) => {\n  const suffix = ctx ? ' | ctx=' + JSON.stringify(ctx) : '';\n  throw new Error('[' + SUPPLIER + ':' + stage + '] ' + msg + suffix);\n};\n\nconst resp = $input.item.json;\nconst messageId = $('Préparer JSON facture1').item.json.messageId || null;\n\nif (resp.code !== 0) {\n  fail('api', 'Zoho a rejeté la création', { messageId, http_code: resp.code, zoho_message: resp.message });\n}\n\nconst bill = resp.bill;\nlog('api', 'Bill created', { bill_id: bill.bill_id, bill_number: bill.bill_number, total: bill.total });\n\nreturn {\n  bill_id: bill.bill_id,\n  bill_number: bill.bill_number,\n  status: bill.status,\n  total: bill.total,\n  balance: bill.balance,\n  created: true,\n  messageId\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2256, 0],
+      "name": "Vérifier réponse Zoho1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SUPPLIER = 'KUEHNE';\nconst log = (stage, msg, meta) => {\n  const suffix = meta && Object.keys(meta).length ? ' ' + JSON.stringify(meta) : '';\n  console.log('[' + SUPPLIER + ':' + stage + '] ' + msg + suffix);\n};\n\nconst invoiceNumber = $('Nettoyer les lignes1').item.json.invoice_number;\nconst messageId = $('Nettoyer les lignes1').item.json.messageId || null;\nconst existingBill = $input.item.json.bills[0];\n\nlog('validate', 'Doublon ignoré', { invoice_number: invoiceNumber, existing_bill_id: existingBill.bill_id });\n\nreturn {\n  invoice_number: invoiceNumber,\n  skipped: true,\n  reason: 'already_exists',\n  existing_bill_id: existingBill.bill_id,\n  existing_bill_status: existingBill.status,\n  messageId\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1808, -48],
+      "name": "Log doublon ignoré1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const SUPPLIER = 'KUEHNE';\nconst items = $input.all();\nconst created = [];\nconst skipped = [];\nlet messageId = null;\n\nfor (const item of items) {\n  const d = item.json;\n  if (!messageId && d.messageId) messageId = d.messageId;\n  if (d.created) {\n    created.push({ type: 'bill', id: d.bill_id, number: d.bill_number, amount: d.total });\n  } else if (d.skipped) {\n    skipped.push({ reason: d.reason, ref: d.invoice_number, existing_id: d.existing_bill_id });\n  }\n}\n\n// Fallback messageId from upstream\nif (!messageId) {\n  try { messageId = $('Code in JavaScript').first().json.messageId; } catch (_) {}\n}\n\nlet status = 'success';\nif (created.length === 0 && skipped.length > 0) status = 'skipped';\nif (created.length > 0 && skipped.length > 0) status = 'partial';\nif (created.length === 0 && skipped.length === 0) status = 'skipped';\n\nconst summaryParts = [];\nif (created.length) summaryParts.push('Created ' + created.length + ' bill(s)');\nif (skipped.length) summaryParts.push('Skipped ' + skipped.length + ' duplicate(s)');\n\nreturn [{\n  json: {\n    status,\n    supplier: SUPPLIER,\n    message_id: messageId,\n    records_created: created,\n    records_skipped: skipped,\n    summary: summaryParts.join(', ') || 'No invoices found'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1360, 48],
+      "name": "Return Success Payload"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const SUPPLIER = 'KUEHNE';\nconst messageId = $input.first().json.messageId || null;\nconst availableFiles = $input.first().json.availableFiles || [];\n\nreturn [{\n  json: {\n    status: 'skipped',\n    supplier: SUPPLIER,\n    message_id: messageId,\n    records_created: [],\n    records_skipped: [{ reason: 'no_attachment', ref: availableFiles.join(', ') }],\n    summary: 'Aucune pièce jointe PDF trouvée'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [688, 312],
+      "name": "Return Skipped (no file)"
+    },
+    {
+      "parameters": {
+        "operation": "getAll", "returnAll": true, "simple": false,
+        "filters": { "q": "-{label:imported} has:attachment", "readStatus": "unread", "sender": "no.reply@basware.com" },
+        "options": { "downloadAttachments": true }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [16, 120],
+      "name": "Get many messages"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-208, 120],
+      "name": "When clicking 'Execute workflow'"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [[{ "node": "Code in JavaScript", "type": "main", "index": 0 }]]
+    },
+    "When clicking 'Execute workflow'": {
+      "main": [[{ "node": "Get many messages", "type": "main", "index": 0 }]]
+    },
+    "Get many messages": {
+      "main": [[{ "node": "Code in JavaScript", "type": "main", "index": 0 }]]
+    },
+    "Code in JavaScript": {
+      "main": [[{ "node": "Fichier trouvé ?", "type": "main", "index": 0 }]]
+    },
+    "Fichier trouvé ?": {
+      "main": [
+        [{ "node": "Extract from File1", "type": "main", "index": 0 }],
+        [{ "node": "Return Skipped (no file)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Extract from File1": {
+      "main": [[{ "node": "Nettoyer les lignes1", "type": "main", "index": 0 }]]
+    },
+    "Nettoyer les lignes1": {
+      "main": [[{ "node": "Loop Over Items", "type": "main", "index": 0 }]]
+    },
+    "Loop Over Items": {
+      "main": [
+        [{ "node": "Return Success Payload", "type": "main", "index": 0 }],
+        [{ "node": "Vérifier existence facture1", "type": "main", "index": 0 }]
+      ]
+    },
+    "Vérifier existence facture1": {
+      "main": [[{ "node": "Facture déjà importée ?1", "type": "main", "index": 0 }]]
+    },
+    "Facture déjà importée ?1": {
+      "main": [
+        [{ "node": "Préparer JSON facture1", "type": "main", "index": 0 }],
+        [{ "node": "Log doublon ignoré1", "type": "main", "index": 0 }]
+      ]
+    },
+    "Préparer JSON facture1": {
+      "main": [[{ "node": "Créer facture fournisseur Zoho Books1", "type": "main", "index": 0 }]]
+    },
+    "Créer facture fournisseur Zoho Books1": {
+      "main": [[{ "node": "Vérifier réponse Zoho1", "type": "main", "index": 0 }]]
+    },
+    "Vérifier réponse Zoho1": {
+      "main": [[{ "node": "Loop Over Items", "type": "main", "index": 0 }]]
+    },
+    "Log doublon ignoré1": {
+      "main": [[{ "node": "Loop Over Items", "type": "main", "index": 0 }]]
+    }
+  }
+}
