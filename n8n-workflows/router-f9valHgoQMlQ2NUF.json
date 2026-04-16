@@ -8,28 +8,17 @@
   "nodes": [
     {
       "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyHour"
-            }
-          ]
-        },
+        "pollTimes": { "item": [{ "mode": "everyHour" }] },
         "simple": false,
         "filters": {
           "q": "-{label:imported} -{label:error} -{label:unrouted} has:attachment",
           "readStatus": "unread"
         },
-        "options": {
-          "downloadAttachments": true
-        }
+        "options": { "downloadAttachments": true }
       },
       "type": "n8n-nodes-base.gmailTrigger",
       "typeVersion": 1.3,
-      "position": [
-        2224,
-        1200
-      ],
+      "position": [2224, 1200],
       "name": "Gmail Trigger"
     },
     {
@@ -38,1540 +27,267 @@
           "values": [
             {
               "conditions": {
-                "options": {
-                  "caseSensitive": false,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.from.value[0].address }}",
-                    "rightValue": "no-reply@invoice.tiime.fr",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict", "version": 3 },
+                "conditions": [{ "leftValue": "={{ $json.from.value[0].address }}", "rightValue": "no-reply@invoice.tiime.fr", "operator": { "type": "string", "operation": "equals" } }],
                 "combinator": "and"
               },
-              "renameOutput": true,
-              "outputKey": "Facture PLS"
+              "renameOutput": true, "outputKey": "Facture PLS"
             },
             {
               "conditions": {
-                "options": {
-                  "caseSensitive": false,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.from.value[0].address }}",
-                    "rightValue": "hedy@plservice.fr",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict", "version": 3 },
+                "conditions": [{ "leftValue": "={{ $json.from.value[0].address }}", "rightValue": "hedy@plservice.fr", "operator": { "type": "string", "operation": "equals" } }],
                 "combinator": "and"
               },
-              "renameOutput": true,
-              "outputKey": "Stock PLS"
+              "renameOutput": true, "outputKey": "Stock PLS"
             },
             {
               "conditions": {
-                "options": {
-                  "caseSensitive": false,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.from.value[0].address }}",
-                    "rightValue": "exploitation@consideritdone.fr",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict", "version": 3 },
+                "conditions": [{ "leftValue": "={{ $json.from.value[0].address }}", "rightValue": "exploitation@consideritdone.fr", "operator": { "type": "string", "operation": "equals" } }],
                 "combinator": "and"
               },
-              "renameOutput": true,
-              "outputKey": "consider it done"
+              "renameOutput": true, "outputKey": "consider it done"
             },
             {
               "conditions": {
-                "options": {
-                  "caseSensitive": false,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.from.value[0].address }}",
-                    "rightValue": "SFF_CARREFOUR@carrefour.com",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict", "version": 3 },
+                "conditions": [{ "leftValue": "={{ $json.from.value[0].address }}", "rightValue": "SFF_CARREFOUR@carrefour.com", "operator": { "type": "string", "operation": "equals" } }],
                 "combinator": "and"
               },
-              "renameOutput": true,
-              "outputKey": "FINIFAC"
+              "renameOutput": true, "outputKey": "FINIFAC"
             },
             {
               "conditions": {
-                "options": {
-                  "caseSensitive": false,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.from.value[0].address }}",
-                    "rightValue": "ferid_mazari@carrefour.com",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict", "version": 3 },
+                "conditions": [{ "leftValue": "={{ $json.from.value[0].address }}", "rightValue": "ferid_mazari@carrefour.com", "operator": { "type": "string", "operation": "equals" } }],
                 "combinator": "and"
               },
-              "renameOutput": true,
-              "outputKey": "VENTES MAGASIN"
+              "renameOutput": true, "outputKey": "VENTES MAGASIN"
             },
             {
               "conditions": {
-                "options": {
-                  "caseSensitive": false,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.from.value[0].address }}",
-                    "rightValue": "cw@saylinternational.com",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict", "version": 3 },
+                "conditions": [{ "leftValue": "={{ $json.from.value[0].address }}", "rightValue": "cw@saylinternational.com", "operator": { "type": "string", "operation": "equals" } }],
                 "combinator": "and"
               },
-              "renameOutput": true,
-              "outputKey": "CW"
+              "renameOutput": true, "outputKey": "CW"
             },
             {
               "conditions": {
-                "options": {
-                  "caseSensitive": false,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.from.value[0].address }}",
-                    "rightValue": "no.reply@basware.com",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict", "version": 3 },
+                "conditions": [{ "leftValue": "={{ $json.from.value[0].address }}", "rightValue": "no.reply@basware.com", "operator": { "type": "string", "operation": "equals" } }],
                 "combinator": "and"
               },
-              "renameOutput": true,
-              "outputKey": "Kuehne"
+              "renameOutput": true, "outputKey": "Kuehne"
             },
             {
               "conditions": {
-                "options": {
-                  "caseSensitive": false,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.from.value[0].address }}",
-                    "rightValue": "bastin.thierry@wanadoo.fr",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict", "version": 3 },
+                "conditions": [{ "leftValue": "={{ $json.from.value[0].address }}", "rightValue": "bastin.thierry@wanadoo.fr", "operator": { "type": "string", "operation": "equals" } }],
                 "combinator": "and"
               },
-              "renameOutput": true,
-              "outputKey": "SALAIRES"
+              "renameOutput": true, "outputKey": "SALAIRES"
             },
             {
               "conditions": {
-                "options": {
-                  "caseSensitive": false,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.from.value[0].address }}",
-                    "rightValue": "c.dinar@fieccor.fr",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict", "version": 3 },
+                "conditions": [{ "leftValue": "={{ $json.from.value[0].address }}", "rightValue": "c.dinar@fieccor.fr", "operator": { "type": "string", "operation": "equals" } }],
                 "combinator": "and"
               },
-              "renameOutput": true,
-              "outputKey": "fieccor"
+              "renameOutput": true, "outputKey": "fieccor"
             },
             {
               "conditions": {
-                "options": {
-                  "caseSensitive": false,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.from.value[0].address }}",
-                    "rightValue": "a.guerin@herport.fr",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict", "version": 3 },
+                "conditions": [{ "leftValue": "={{ $json.from.value[0].address }}", "rightValue": "a.guerin@herport.fr", "operator": { "type": "string", "operation": "equals" } }],
                 "combinator": "and"
               },
-              "renameOutput": true,
-              "outputKey": "HERPORT"
+              "renameOutput": true, "outputKey": "HERPORT"
             },
             {
               "conditions": {
-                "options": {
-                  "caseSensitive": false,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.from.value[0].address }}",
-                    "rightValue": "comptabilite@schouttet.fr",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict", "version": 3 },
+                "conditions": [{ "leftValue": "={{ $json.from.value[0].address }}", "rightValue": "comptabilite@schouttet.fr", "operator": { "type": "string", "operation": "equals" } }],
                 "combinator": "and"
               },
-              "renameOutput": true,
-              "outputKey": "schouttet"
+              "renameOutput": true, "outputKey": "schouttet"
             },
             {
               "conditions": {
-                "options": {
-                  "caseSensitive": false,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.from.value[0].address }}",
-                    "rightValue": "francemedek@gmail.com",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict", "version": 3 },
+                "conditions": [{ "leftValue": "={{ $json.from.value[0].address }}", "rightValue": "francemedek@gmail.com", "operator": { "type": "string", "operation": "equals" } }],
                 "combinator": "and"
               },
-              "renameOutput": true,
-              "outputKey": "FRANCE MEDEK"
+              "renameOutput": true, "outputKey": "FRANCE MEDEK"
             }
           ]
         },
         "options": {
           "fallbackOutput": "extra",
-          "renameFallbackOutput": "unrouted"
+          "renameFallbackOutput": "Unrouted",
+          "ignoreCase": true
         }
       },
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
-      "position": [
-        2448,
-        944
-      ],
+      "position": [2448, 944],
       "name": "Switch"
     },
     {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "T4MQopyAWY1v8h7N",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/T4MQopyAWY1v8h7N",
-          "cachedResultName": "Medek — Import Facture PLS"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        2944,
-        48
-      ],
-      "name": "Call 'Facture PLS'",
-      "continueOnFail": true
+      "parameters": { "workflowId": { "__rl": true, "value": "T4MQopyAWY1v8h7N", "mode": "list", "cachedResultName": "Import Facture PLS" }, "workflowInputs": { "mappingMode": "defineBelow", "value": {}, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": true }, "options": {} },
+      "type": "n8n-nodes-base.executeWorkflow", "typeVersion": 1.3, "position": [2944, 48],
+      "name": "Call 'Import Facture PLS'", "continueOnFail": true
+    },
+    {
+      "parameters": { "workflowId": { "__rl": true, "value": "4zigEyNSCwtFGIzl", "mode": "list", "cachedResultName": "Import Stock PLS" }, "workflowInputs": { "mappingMode": "defineBelow", "value": {}, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": true }, "options": {} },
+      "type": "n8n-nodes-base.executeWorkflow", "typeVersion": 1.3, "position": [2944, 240],
+      "name": "Call 'Import Stock PLS'", "continueOnFail": true
+    },
+    {
+      "parameters": { "workflowId": { "__rl": true, "value": "IhFf3Ct0TYvRnI6E", "mode": "list", "cachedResultName": "Import Invoice CONSIDER IT DONE" }, "workflowInputs": { "mappingMode": "defineBelow", "value": {}, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": true }, "options": {} },
+      "type": "n8n-nodes-base.executeWorkflow", "typeVersion": 1.3, "position": [2944, 432],
+      "name": "Call 'Import Invoice CONSIDER IT DONE'", "continueOnFail": true
+    },
+    {
+      "parameters": { "workflowId": { "__rl": true, "value": "vg0CGxoCMONudAJa", "mode": "list", "cachedResultName": "FINIFAC" }, "workflowInputs": { "mappingMode": "defineBelow", "value": {}, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": true }, "options": {} },
+      "type": "n8n-nodes-base.executeWorkflow", "typeVersion": 1.3, "position": [2944, 624],
+      "name": "Call 'FINIFAC'", "continueOnFail": true
+    },
+    {
+      "parameters": { "workflowId": { "__rl": true, "value": "zvcDHce7yiN32aOr", "mode": "list", "cachedResultName": "Import Ventes Magasin" }, "workflowInputs": { "mappingMode": "defineBelow", "value": {}, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": true }, "options": {} },
+      "type": "n8n-nodes-base.executeWorkflow", "typeVersion": 1.3, "position": [2944, 816],
+      "name": "Call 'Import Ventes Magasin'", "continueOnFail": true
+    },
+    {
+      "parameters": { "workflowId": { "__rl": true, "value": "mAVfdmjFyHrLVxte", "mode": "list", "cachedResultName": "Import CW" }, "workflowInputs": { "mappingMode": "defineBelow", "value": {}, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": true }, "options": {} },
+      "type": "n8n-nodes-base.executeWorkflow", "typeVersion": 1.3, "position": [2944, 1008],
+      "name": "Call 'Import CW'", "continueOnFail": true
+    },
+    {
+      "parameters": { "workflowId": { "__rl": true, "value": "gG7UXfOyDokykLAb", "mode": "list", "cachedResultName": "Import Facture Kuehne" }, "workflowInputs": { "mappingMode": "defineBelow", "value": {}, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": true }, "options": {} },
+      "type": "n8n-nodes-base.executeWorkflow", "typeVersion": 1.3, "position": [2944, 1200],
+      "name": "Call 'Import Facture Kuehne'", "continueOnFail": true
+    },
+    {
+      "parameters": { "workflowId": { "__rl": true, "value": "an83468N5ZqJzIe4", "mode": "list", "cachedResultName": "Import Expense Salaires" }, "workflowInputs": { "mappingMode": "defineBelow", "value": {}, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": true }, "options": {} },
+      "type": "n8n-nodes-base.executeWorkflow", "typeVersion": 1.3, "position": [2944, 1392],
+      "name": "Call 'Import Expense Salaires'", "continueOnFail": true
+    },
+    {
+      "parameters": { "workflowId": { "__rl": true, "value": "uKlGVkXKPZ8IsVrY", "mode": "list", "cachedResultName": "Import Facture Serge" }, "workflowInputs": { "mappingMode": "defineBelow", "value": {}, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": true }, "options": {} },
+      "type": "n8n-nodes-base.executeWorkflow", "typeVersion": 1.3, "position": [2944, 1584],
+      "name": "Call 'Import Facture Serge'", "continueOnFail": true
+    },
+    {
+      "parameters": { "workflowId": { "__rl": true, "value": "T7AWC7eXIzhsVaUi", "mode": "list", "cachedResultName": "Import Facture Herport" }, "workflowInputs": { "mappingMode": "defineBelow", "value": {}, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": true }, "options": {} },
+      "type": "n8n-nodes-base.executeWorkflow", "typeVersion": 1.3, "position": [2944, 1776],
+      "name": "Call 'Import Facture Herport'", "continueOnFail": true
+    },
+    {
+      "parameters": { "workflowId": { "__rl": true, "value": "I8broe28tNF8usqQ", "mode": "list", "cachedResultName": "Import Facture Schouttet" }, "workflowInputs": { "mappingMode": "defineBelow", "value": {}, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": true }, "options": {} },
+      "type": "n8n-nodes-base.executeWorkflow", "typeVersion": 1.3, "position": [2944, 1968],
+      "name": "Call 'Import Facture Schouttet'", "continueOnFail": true
+    },
+    {
+      "parameters": { "workflowId": { "__rl": true, "value": "7fnwGlynh3YT5qkB", "mode": "list", "cachedResultName": "Import BL EDI" }, "workflowInputs": { "mappingMode": "defineBelow", "value": {}, "matchingColumns": [], "schema": [], "attemptToConvertTypes": false, "convertFieldsToString": true }, "options": {} },
+      "type": "n8n-nodes-base.executeWorkflow", "typeVersion": 1.3, "position": [2944, 2160],
+      "name": "Call 'Import BL EDI'", "continueOnFail": true
     },
     {
       "parameters": {
         "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "leftValue": "={{ $json.error }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "name": "filter.operator.exists"
-              }
-            }
-          ],
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 3 },
+          "conditions": [{ "leftValue": "={{ $json.error }}", "rightValue": "", "operator": { "type": "string", "operation": "notExists" } }],
           "combinator": "and"
         }
       },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        3200,
-        48
-      ],
-      "name": "Error? Facture PLS"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "4zigEyNSCwtFGIzl",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/4zigEyNSCwtFGIzl",
-          "cachedResultName": "Medek — Import Stock PLS"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        2944,
-        240
-      ],
-      "name": "Call 'Stock PLS'",
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "leftValue": "={{ $json.error }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "name": "filter.operator.exists"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        3200,
-        240
-      ],
-      "name": "Error? Stock PLS"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "IhFf3Ct0TYvRnI6E",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/IhFf3Ct0TYvRnI6E",
-          "cachedResultName": "Medek — Import Invoice CONSIDER IT DONE"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        2944,
-        432
-      ],
-      "name": "Call 'CID'",
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "leftValue": "={{ $json.error }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "name": "filter.operator.exists"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        3200,
-        432
-      ],
-      "name": "Error? CID"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "vg0CGxoCMONudAJa",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/vg0CGxoCMONudAJa",
-          "cachedResultName": "Medek — FINIFAC – Encaissement Carrefour → Paiement factures Zoho"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        2944,
-        624
-      ],
-      "name": "Call 'FINIFAC'",
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "leftValue": "={{ $json.error }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "name": "filter.operator.exists"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        3200,
-        624
-      ],
-      "name": "Error? FINIFAC"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "zvcDHce7yiN32aOr",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/zvcDHce7yiN32aOr",
-          "cachedResultName": "Medek — Import Ventes Magasin"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        2944,
-        816
-      ],
-      "name": "Call 'VENTES'",
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "leftValue": "={{ $json.error }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "name": "filter.operator.exists"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        3200,
-        816
-      ],
-      "name": "Error? VENTES"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "mAVfdmjFyHrLVxte",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/mAVfdmjFyHrLVxte",
-          "cachedResultName": "Medek — Import CW"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        2944,
-        1008
-      ],
-      "name": "Call 'CW'",
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "leftValue": "={{ $json.error }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "name": "filter.operator.exists"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        3200,
-        1008
-      ],
-      "name": "Error? CW"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "gG7UXfOyDokykLAb",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/gG7UXfOyDokykLAb",
-          "cachedResultName": "Medek — Import Facture Kuehne"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        2944,
-        1200
-      ],
-      "name": "Call 'Kuehne'",
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "leftValue": "={{ $json.error }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "name": "filter.operator.exists"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        3200,
-        1200
-      ],
-      "name": "Error? Kuehne"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "an83468N5ZqJzIe4",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/an83468N5ZqJzIe4",
-          "cachedResultName": "Medek — Import Expense Salaires"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        2944,
-        1392
-      ],
-      "name": "Call 'SALAIRES'",
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "leftValue": "={{ $json.error }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "name": "filter.operator.exists"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        3200,
-        1392
-      ],
-      "name": "Error? SALAIRES"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "uKlGVkXKPZ8IsVrY",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/uKlGVkXKPZ8IsVrY",
-          "cachedResultName": "Medek — Import Facture Serge"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        2944,
-        1584
-      ],
-      "name": "Call 'Serge'",
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "leftValue": "={{ $json.error }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "name": "filter.operator.exists"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        3200,
-        1584
-      ],
-      "name": "Error? Serge"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "T7AWC7eXIzhsVaUi",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/T7AWC7eXIzhsVaUi",
-          "cachedResultName": "Medek — Import Facture Herport"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        2944,
-        1776
-      ],
-      "name": "Call 'HERPORT'",
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "leftValue": "={{ $json.error }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "name": "filter.operator.exists"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        3200,
-        1776
-      ],
-      "name": "Error? HERPORT"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "I8broe28tNF8usqQ",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/I8broe28tNF8usqQ",
-          "cachedResultName": "Medek — Import Facture Schouttet"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        2944,
-        1968
-      ],
-      "name": "Call 'Schouttet'",
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "leftValue": "={{ $json.error }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "name": "filter.operator.exists"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        3200,
-        1968
-      ],
-      "name": "Error? Schouttet"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "7fnwGlynh3YT5qkB",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/7fnwGlynh3YT5qkB",
-          "cachedResultName": "Medek — Import BL EDI"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        2944,
-        2160
-      ],
-      "name": "Call 'BL EDI'",
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "leftValue": "={{ $json.error }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "name": "filter.operator.exists"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        3200,
-        2160
-      ],
-      "name": "Error? BL EDI"
+      "type": "n8n-nodes-base.if", "typeVersion": 2.3, "position": [3200, 1104],
+      "name": "Subworkflow OK?"
     },
     {
       "parameters": {
         "operation": "addLabels",
         "messageId": "={{ $('Gmail Trigger').item.json.id }}",
-        "labelIds": [
-          "Label_5420650119621021264"
-        ]
+        "labelIds": ["Label_5420650119621021264"]
       },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [
-        3504,
-        1104
-      ],
+      "type": "n8n-nodes-base.gmail", "typeVersion": 2.1, "position": [3504, 1004],
       "name": "Marquer email importé"
     },
     {
-      "parameters": {
-        "operation": "markAsRead",
-        "messageId": "={{ $('Gmail Trigger').first().json.id }}"
-      },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.2,
-      "position": [
-        3728,
-        1104
-      ],
+      "parameters": { "operation": "markAsRead", "messageId": "={{ $('Gmail Trigger').first().json.id }}" },
+      "type": "n8n-nodes-base.gmail", "typeVersion": 2.2, "position": [3728, 1004],
       "name": "Mark a message as read"
     },
     {
       "parameters": {
         "operation": "addLabels",
         "messageId": "={{ $('Gmail Trigger').item.json.id }}",
-        "labelIds": [
-          "Label_4750124165477147534"
-        ]
+        "labelIds": ["Label_4750124165477147534"]
       },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.2,
-      "position": [
-        3504,
-        2500
-      ],
+      "type": "n8n-nodes-base.gmail", "typeVersion": 2.2, "position": [3200, 2500],
       "name": "Label unrouted"
     },
     {
-      "parameters": {
-        "operation": "markAsRead",
-        "messageId": "={{ $('Gmail Trigger').first().json.id }}"
-      },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.2,
-      "position": [
-        3728,
-        2500
-      ],
+      "parameters": { "operation": "markAsRead", "messageId": "={{ $('Gmail Trigger').first().json.id }}" },
+      "type": "n8n-nodes-base.gmail", "typeVersion": 2.2, "position": [3420, 2500],
       "name": "Mark unrouted as read"
     },
     {
       "parameters": {
         "sendTo": "gestion.medek@gmail.com",
-        "subject": "=[n8n] Unrouted email from {{ $('Gmail Trigger').item.json.from.value[0].address }} — {{ $('Gmail Trigger').item.json.subject }}",
-        "emailType": "html",
-        "message": "=<h2>Unrouted email received</h2><p>An email with attachments was received but did not match any routing rule.</p><table style=\"border-collapse:collapse;font-family:sans-serif;font-size:14px\"><tr><td style=\"padding:4px 12px 4px 0;color:#666\">From</td><td>{{ $('Gmail Trigger').item.json.from.value[0].address }}</td></tr><tr><td style=\"padding:4px 12px 4px 0;color:#666\">Subject</td><td>{{ $('Gmail Trigger').item.json.subject }}</td></tr><tr><td style=\"padding:4px 12px 4px 0;color:#666\">Date</td><td>{{ $('Gmail Trigger').item.json.date }}</td></tr></table><p>The email has been labeled <b>unrouted</b> and will not be reprocessed.</p><hr><p style=\"color:#888;font-size:12px\">Automated notification from n8n</p>",
-        "options": {
-          "appendAttribution": false
-        }
+        "subject": "=[n8n] Unrouted supplier email needs handling — {{ $('Gmail Trigger').item.json.from.value[0].address }}",
+        "emailType": "text",
+        "message": "=Bonjour,\n\nUn email avec pièce jointe a été reçu mais ne correspond à aucun fournisseur configuré.\n\nDe : {{ $('Gmail Trigger').item.json.from.value[0].address }}\nObjet : {{ $('Gmail Trigger').item.json.subject }}\nDate : {{ $('Gmail Trigger').item.json.date }}\n\nL'email a été marqué « unrouted » dans Gmail.\n\nCordialement,\nn8n Automation",
+        "options": { "appendAttribution": false }
       },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.2,
-      "position": [
-        3952,
-        2500
-      ],
+      "type": "n8n-nodes-base.gmail", "typeVersion": 2.2, "position": [3640, 2500],
       "name": "Send unrouted notification"
     },
     {
       "parameters": {
-        "operation": "getAll",
-        "limit": 10,
-        "simple": false,
-        "filters": {
-          "q": "-{label:imported} -{label:error} -{label:unrouted} has:attachment",
-          "readStatus": "unread"
-        },
-        "options": {
-          "downloadAttachments": true
-        }
+        "operation": "getAll", "limit": 10, "simple": false,
+        "filters": { "q": "-{label:imported} -{label:error} -{label:unrouted} has:attachment", "readStatus": "unread" },
+        "options": { "downloadAttachments": true }
       },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.2,
-      "position": [
-        2224,
-        1008
-      ],
-      "name": "Get many messages",
-      "disabled": true
+      "type": "n8n-nodes-base.gmail", "typeVersion": 2.2, "position": [2224, 1008],
+      "name": "Get many messages", "disabled": true
     }
   ],
   "connections": {
-    "Gmail Trigger": {
-      "main": [
-        [
-          {
-            "node": "Switch",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
+    "Gmail Trigger": { "main": [[{ "node": "Switch", "type": "main", "index": 0 }]] },
     "Switch": {
       "main": [
-        [
-          {
-            "node": "Call 'Facture PLS'",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Call 'Stock PLS'",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Call 'CID'",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Call 'FINIFAC'",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Call 'VENTES'",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Call 'CW'",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Call 'Kuehne'",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Call 'SALAIRES'",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Call 'Serge'",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Call 'HERPORT'",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Call 'Schouttet'",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Call 'BL EDI'",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Label unrouted",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        [{ "node": "Call 'Import Facture PLS'", "type": "main", "index": 0 }],
+        [{ "node": "Call 'Import Stock PLS'", "type": "main", "index": 0 }],
+        [{ "node": "Call 'Import Invoice CONSIDER IT DONE'", "type": "main", "index": 0 }],
+        [{ "node": "Call 'FINIFAC'", "type": "main", "index": 0 }],
+        [{ "node": "Call 'Import Ventes Magasin'", "type": "main", "index": 0 }],
+        [{ "node": "Call 'Import CW'", "type": "main", "index": 0 }],
+        [{ "node": "Call 'Import Facture Kuehne'", "type": "main", "index": 0 }],
+        [{ "node": "Call 'Import Expense Salaires'", "type": "main", "index": 0 }],
+        [{ "node": "Call 'Import Facture Serge'", "type": "main", "index": 0 }],
+        [{ "node": "Call 'Import Facture Herport'", "type": "main", "index": 0 }],
+        [{ "node": "Call 'Import Facture Schouttet'", "type": "main", "index": 0 }],
+        [{ "node": "Call 'Import BL EDI'", "type": "main", "index": 0 }],
+        [{ "node": "Label unrouted", "type": "main", "index": 0 }]
       ]
     },
-    "Call 'Facture PLS'": {
-      "main": [
-        [
-          {
-            "node": "Error? Facture PLS",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Error? Facture PLS": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Marquer email importé",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Call 'Stock PLS'": {
-      "main": [
-        [
-          {
-            "node": "Error? Stock PLS",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Error? Stock PLS": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Marquer email importé",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Call 'CID'": {
-      "main": [
-        [
-          {
-            "node": "Error? CID",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Error? CID": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Marquer email importé",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Call 'FINIFAC'": {
-      "main": [
-        [
-          {
-            "node": "Error? FINIFAC",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Error? FINIFAC": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Marquer email importé",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Call 'VENTES'": {
-      "main": [
-        [
-          {
-            "node": "Error? VENTES",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Error? VENTES": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Marquer email importé",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Call 'CW'": {
-      "main": [
-        [
-          {
-            "node": "Error? CW",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Error? CW": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Marquer email importé",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Call 'Kuehne'": {
-      "main": [
-        [
-          {
-            "node": "Error? Kuehne",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Error? Kuehne": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Marquer email importé",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Call 'SALAIRES'": {
-      "main": [
-        [
-          {
-            "node": "Error? SALAIRES",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Error? SALAIRES": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Marquer email importé",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Call 'Serge'": {
-      "main": [
-        [
-          {
-            "node": "Error? Serge",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Error? Serge": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Marquer email importé",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Call 'HERPORT'": {
-      "main": [
-        [
-          {
-            "node": "Error? HERPORT",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Error? HERPORT": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Marquer email importé",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Call 'Schouttet'": {
-      "main": [
-        [
-          {
-            "node": "Error? Schouttet",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Error? Schouttet": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Marquer email importé",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Call 'BL EDI'": {
-      "main": [
-        [
-          {
-            "node": "Error? BL EDI",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Error? BL EDI": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Marquer email importé",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Marquer email importé": {
-      "main": [
-        [
-          {
-            "node": "Mark a message as read",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Label unrouted": {
-      "main": [
-        [
-          {
-            "node": "Mark unrouted as read",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Mark unrouted as read": {
-      "main": [
-        [
-          {
-            "node": "Send unrouted notification",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get many messages": {
-      "main": [
-        [
-          {
-            "node": "Switch",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    }
+    "Call 'Import Facture PLS'": { "main": [[{ "node": "Subworkflow OK?", "type": "main", "index": 0 }]] },
+    "Call 'Import Stock PLS'": { "main": [[{ "node": "Subworkflow OK?", "type": "main", "index": 0 }]] },
+    "Call 'Import Invoice CONSIDER IT DONE'": { "main": [[{ "node": "Subworkflow OK?", "type": "main", "index": 0 }]] },
+    "Call 'FINIFAC'": { "main": [[{ "node": "Subworkflow OK?", "type": "main", "index": 0 }]] },
+    "Call 'Import Ventes Magasin'": { "main": [[{ "node": "Subworkflow OK?", "type": "main", "index": 0 }]] },
+    "Call 'Import CW'": { "main": [[{ "node": "Subworkflow OK?", "type": "main", "index": 0 }]] },
+    "Call 'Import Facture Kuehne'": { "main": [[{ "node": "Subworkflow OK?", "type": "main", "index": 0 }]] },
+    "Call 'Import Expense Salaires'": { "main": [[{ "node": "Subworkflow OK?", "type": "main", "index": 0 }]] },
+    "Call 'Import Facture Serge'": { "main": [[{ "node": "Subworkflow OK?", "type": "main", "index": 0 }]] },
+    "Call 'Import Facture Herport'": { "main": [[{ "node": "Subworkflow OK?", "type": "main", "index": 0 }]] },
+    "Call 'Import Facture Schouttet'": { "main": [[{ "node": "Subworkflow OK?", "type": "main", "index": 0 }]] },
+    "Call 'Import BL EDI'": { "main": [[{ "node": "Subworkflow OK?", "type": "main", "index": 0 }]] },
+    "Subworkflow OK?": { "main": [[{ "node": "Marquer email importé", "type": "main", "index": 0 }], []] },
+    "Marquer email importé": { "main": [[{ "node": "Mark a message as read", "type": "main", "index": 0 }]] },
+    "Label unrouted": { "main": [[{ "node": "Mark unrouted as read", "type": "main", "index": 0 }]] },
+    "Mark unrouted as read": { "main": [[{ "node": "Send unrouted notification", "type": "main", "index": 0 }]] }
   }
 }

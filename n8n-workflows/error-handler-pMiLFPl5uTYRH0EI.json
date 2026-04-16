@@ -15,39 +15,12 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "// Parse the error trigger payload into a structured object.\n// Expected prefix format (Contract v1):\n//   [SUPPLIER:STAGE] human message | ctx={\"key\":\"value\",...}\nconst payload = $input.first().json;\nconst exec = payload.execution || {};\nconst workflowData = exec.workflowData || {};\nconst error = exec.error || {};\n\nconst workflowId = workflowData.id || '';\nconst workflowName = workflowData.name || 'Unknown';\nconst executionId = exec.id || '';\nconst errorNode = (error.node && error.node.name) || 'Unknown';\nconst rawMessage = String(error.message || '').trim();\nconst stoppedAt = exec.stoppedAt || new Date().toISOString();\n\nlet supplier = null;\nlet stage = null;\nlet humanMessage = rawMessage;\nconst prefixMatch = rawMessage.match(/^\\[([A-Z0-9_-]+):([a-z_]+)\\]\\s*(.*)$/);\nif (prefixMatch) {\n  supplier = prefixMatch[1];\n  stage = prefixMatch[2];\n  humanMessage = prefixMatch[3];\n}\n\nlet ctx = null;\nconst ctxMatch = humanMessage.match(/^(.*?)\\s*\\|\\s*ctx=(\\{.*\\})\\s*$/);\nif (ctxMatch) {\n  humanMessage = ctxMatch[1].trim();\n  try { ctx = JSON.parse(ctxMatch[2]); }\n  catch (_) { ctx = { _parse_error: 'ctx was not valid JSON', _raw: ctxMatch[2] }; }\n}\n\nconst messageId = (ctx && (ctx.messageId || ctx.message_id)) || null;\nconst executionUrl = workflowId && executionId\n  ? 'https://francemedek.app.n8n.cloud/workflow/' + workflowId + '/executions/' + executionId\n  : null;\nconst gmailUrl = messageId ? 'https://mail.google.com/mail/u/0/#all/' + messageId : null;\n\nreturn [{\n  json: {\n    workflowId, workflowName, executionId, executionUrl,\n    errorNode, supplier, stage, humanMessage, rawMessage,\n    ctx, ctxPretty: ctx ? JSON.stringify(ctx, null, 2) : null,\n    messageId, gmailUrl, timestamp: stoppedAt, hasMessageId: !!messageId,\n  },\n}];"
+        "jsCode": "// Parse the error trigger payload into a structured object.\n// Expected prefix format (Contract v1):\n//   [SUPPLIER:STAGE] human message | ctx={\"key\":\"value\",...}\nconst payload = $input.first().json;\nconst exec = payload.execution || {};\nconst workflowData = exec.workflowData || {};\nconst error = exec.error || {};\n\nconst workflowId = workflowData.id || '';\nconst workflowName = workflowData.name || 'Unknown';\nconst executionId = exec.id || '';\nconst errorNode = (error.node && error.node.name) || 'Unknown';\nconst rawMessage = String(error.message || '').trim();\nconst stoppedAt = exec.stoppedAt || new Date().toISOString();\n\nlet supplier = null;\nlet stage = null;\nlet humanMessage = rawMessage;\nconst prefixMatch = rawMessage.match(/^\\[([A-Z0-9_-]+):([a-z_]+)\\]\\s*(.*)$/);\nif (prefixMatch) {\n  supplier = prefixMatch[1];\n  stage = prefixMatch[2];\n  humanMessage = prefixMatch[3];\n}\n\nlet ctx = null;\nconst ctxMatch = humanMessage.match(/^(.*?)\\s*\\|\\s*ctx=(\\{.*\\})\\s*$/);\nif (ctxMatch) {\n  humanMessage = ctxMatch[1].trim();\n  try { ctx = JSON.parse(ctxMatch[2]); }\n  catch (_) { ctx = { _parse_error: 'ctx was not valid JSON', _raw: ctxMatch[2] }; }\n}\n\nconst messageId = (ctx && (ctx.messageId || ctx.message_id)) || null;\nconst executionUrl = workflowId && executionId\n  ? 'https://francemedek.app.n8n.cloud/workflow/' + workflowId + '/executions/' + executionId\n  : null;\nconst gmailUrl = messageId ? 'https://mail.google.com/mail/u/0/#all/' + messageId : null;\n\nreturn [{\n  json: {\n    workflowId, workflowName, executionId, executionUrl,\n    errorNode, supplier, stage, humanMessage, rawMessage,\n    ctx, ctxPretty: ctx ? JSON.stringify(ctx, null, 2) : null,\n    messageId, gmailUrl, timestamp: stoppedAt,\n  },\n}];"
       },
       "name": "Parse Error Payload",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [480, 304]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "leftValue": "={{ $json.hasMessageId }}",
-              "rightValue": true,
-              "operator": {
-                "type": "boolean",
-                "operation": "true"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "name": "Has messageId?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [740, 304]
     },
     {
       "parameters": {
@@ -58,7 +31,8 @@
       "name": "Label offending email",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
-      "position": [980, 204]
+      "position": [740, 304],
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -73,40 +47,18 @@
       "name": "Send Error Report",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
-      "position": [1240, 404]
+      "position": [980, 304]
     }
   ],
   "connections": {
     "When Workflow Errors": {
-      "main": [
-        [
-          { "node": "Parse Error Payload", "type": "main", "index": 0 }
-        ]
-      ]
+      "main": [[{ "node": "Parse Error Payload", "type": "main", "index": 0 }]]
     },
     "Parse Error Payload": {
-      "main": [
-        [
-          { "node": "Has messageId?", "type": "main", "index": 0 }
-        ]
-      ]
-    },
-    "Has messageId?": {
-      "main": [
-        [
-          { "node": "Label offending email", "type": "main", "index": 0 }
-        ],
-        [
-          { "node": "Send Error Report", "type": "main", "index": 0 }
-        ]
-      ]
+      "main": [[{ "node": "Label offending email", "type": "main", "index": 0 }]]
     },
     "Label offending email": {
-      "main": [
-        [
-          { "node": "Send Error Report", "type": "main", "index": 0 }
-        ]
-      ]
+      "main": [[{ "node": "Send Error Report", "type": "main", "index": 0 }]]
     }
   }
 }
