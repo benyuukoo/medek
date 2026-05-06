@@ -1,10 +1,2 @@
 [build]
   publish = "."
-
-[[edge_functions]]
-  function = "items"
-  path = "/api/items"
-
-[[edge_functions]]
-  function = "image"
-  path = "/api/image/*"
