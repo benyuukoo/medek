@@ -252,7 +252,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--page);
+      background: var(--white);
       border-bottom: 1px solid var(--border);
     }
 
@@ -298,6 +298,7 @@
 
     .product-body {
       padding: 15px 16px 16px;
+      background: #fbfaf7;
     }
 
     .product-model {
@@ -324,7 +325,7 @@
     }
 
     .product-sku {
-      color: var(--muted);
+      color: #746f69;
       font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
       font-size: 11px;
       line-height: 1.4;
@@ -433,7 +434,7 @@
 
     .skeleton-media {
       height: 200px;
-      background: var(--page);
+      background: var(--white);
       border-bottom: 1px solid var(--border);
     }
 
@@ -769,7 +770,7 @@
         var initial = String(name || "M").trim().charAt(0).toUpperCase() || "M";
         var svg = [
           "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"440\" viewBox=\"0 0 640 440\" role=\"img\" aria-label=\"Image indisponible\">",
-          "<rect width=\"640\" height=\"440\" fill=\"#f8f5f0\"/>",
+          "<rect width=\"640\" height=\"440\" fill=\"#ffffff\"/>",
           "<rect x=\"44\" y=\"44\" width=\"552\" height=\"352\" rx=\"24\" fill=\"#ffffff\" stroke=\"#e0dbd3\" stroke-width=\"2\"/>",
           "<text x=\"320\" y=\"246\" text-anchor=\"middle\" font-family=\"Georgia, serif\" font-size=\"128\" fill=\"#2a5c8a\">",
           escapeText(initial),
